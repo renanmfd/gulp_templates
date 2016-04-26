@@ -1,0 +1,52 @@
+{
+    "fileExtensions": [
+        ".less",
+        ".css"
+    ],
+    "excludedFiles": [
+        "vendor.less"
+    ],
+    "attributeQuotes": true,
+    "borderZero": true,
+    "comment": false,
+    "decimalZero": "leading",
+    "depthLevel": 4,
+    "duplicateProperty": false,
+    "emptyRule": false,
+    "finalNewline": false,
+    "hexLength": "long",
+    "hexNotation": {
+        "style": "uppercase"
+    },
+    "hexValidation": true,
+    "idSelector": false,
+    "importantRule": false,
+    "importPath": {
+        "filenameExtension": false,
+        "leadingUnderscore": false
+    },
+    "propertyOrdering": false,
+    "propertyUnits": {
+        "valid": ["px", "rem", "%"],
+        "invalid": ["pt", "em", "vw"]
+    },
+    "qualifyingElement": false,
+    "selectorNaming": false,
+    "singleLinePerProperty": false,
+    "singleLinePerSelector": true,
+    "spaceAfterPropertyColon": "one_space",
+    "spaceAfterPropertyName": "no_space",
+    "spaceAfterPropertyValue": "no_space",
+    "spaceAroundComma": "after",
+    "spaceAroundOperator": "both",
+    "spaceBeforeBrace": "one_space",
+    "spaceBetweenParens": "no_space",
+    "stringQuotes": {
+        "style": "single"
+    },
+    "trailingSemicolon": true,
+    "trailingWhitespace": true,
+    "urlFormat": false,
+    "urlQuotes": true,
+    "zeroUnit": "no_unit"
+}

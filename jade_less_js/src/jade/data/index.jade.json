@@ -1,0 +1,33 @@
+{
+    "title": "Some page",
+    "menus": [
+        {
+            "name": {
+                "pt": "Principal",
+                "en": "Home"
+            },
+            "link": "./index.html"
+        },
+        {
+            "name": {
+                "pt": "Portifólio",
+                "en": "Portifolio"
+            },
+            "link": "./portifolio.html"
+        },
+        {
+            "name": {
+                "pt": "Conhecimento",
+                "en": "Skills"
+            },
+            "link": "./skills.html"
+        },
+        {
+            "name": {
+                "pt": "Contato",
+                "en": "Contact"
+            },
+            "link": "./contact.html"
+        }
+    ]
+}

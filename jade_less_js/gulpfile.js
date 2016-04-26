@@ -1,14 +1,22 @@
 /*jslint browser: true, devel: true, node: true, rhino: false, nomen: true,
          regexp: true, unparam: true, indent: 4, maxlen: 80*/
 
+// Polyfill
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function (searchString, position) {
+        'use strict';
+        position = position || 0;
+        return this.indexOf(searchString, position) === position;
+    };
+}
+
 /**
  * @author Tursites / Renan
  *
  * GULP
  * -- HTML
- *    > HTMLHint (https://github.com/yaniswang/HTMLHint/wiki/Rules)
- *    > w3cJS (https://github.com/thomasdavis/w3cjs)
- *    > HTMLMin (https://github.com/kangax/html-minifier)
+ *    > Jade
+ *    > Jade lint
  * -- CSS
  *    > CSSLint (https://github.com/lazd/gulp-csslint)
  *    > Sourcemaps (https://github.com/floridoo/gulp-sourcemaps)
@@ -21,6 +29,10 @@
  *    > ESLint (https://github.com/karimsa/gulp-jslint)
  *    > Complexity (https://github.com/alexeyraspopov/gulp-complexity)
  *    > Uglify (https://github.com/terinjokes/gulp-uglify)
+ * -- Images
+ *    > ImageMin
+ * -- Favicons
+ *    > Favicons
  */
 (function gulpClosure() {
     'use strict';
@@ -37,19 +49,23 @@
         rename = require('gulp-rename'),
         cache = require('gulp-cached'),
         gutil = require('gulp-util'),
+        data = require('gulp-data'),
+        path = require('path'),
 
         // HTML tools.
-        htmlhint = require('gulp-htmlhint'),
-        htmlmin = require('gulp-htmlmin'),
+        jade = require('gulp-jade'),
+        jadelint = require('gulp-jadelint'),
 
         // CSS tools.
-        csslint = require('gulp-csslint'),
+        lesshint = require('gulp-lesshint'),
         sourcemaps = require('gulp-sourcemaps'),
-        postcss = require('gulp-postcss'),
-        autoprefixer = require('autoprefixer'),
-        pxtorem = require('postcss-pxtorem'),
-        csscomb = require('gulp-csscomb'),
-        cleanCSS = require('gulp-clean-css'),
+        less = require('gulp-less'),
+        LessPluginCleanCSS = require('less-plugin-clean-css'),
+        LessPluginAutoPrefix = require('less-plugin-autoprefix'),
+        LessPluginCSScomb = require('less-plugin-csscomb'),
+        cleancss = new LessPluginCleanCSS({advanced: true}),
+        autoprefix = new LessPluginAutoPrefix({browsers: ["last 2 versions"]}),
+        csscomb = new LessPluginCSScomb("zen"),
 
         // Javascript tools.
         eslint = require('gulp-eslint'),
@@ -75,17 +91,26 @@
     /**
      * HTML build.
      */
-    gulp.task('html-lint', function () {
-        return gulp.src(config.source + '/html/**/*.html')
+    gulp.task('jade-lint', function () {
+        return gulp.src(config.source + '/jade/**/*.jade')
             .pipe(plumber())
-            .pipe(htmlhint())
-            .pipe(htmlhint.failReporter());
+            .pipe(jadelint());
     });
-    gulp.task('html', ['html-lint'], function htmlTask() {
-        return gulp.src(config.source + '/html/**/*.html')
-            .pipe(cache('html'))
+    gulp.task('jade', ['jade-lint'], function htmlTask() {
+        return gulp.src([
+            config.source + '/jade/**/*.jade',
+            '!' + config.source + '/jade/layouts/**/*.jade'
+        ])
             .pipe(plumber(plumberOpt))
-            .pipe(htmlmin({collapseWhitespace: true}))
+            .pipe(data(function (file) {
+                var filename = path.basename(file.path);
+                if (filename.startsWith('_')) {
+                    return {};
+                }
+                return require(config.source + '/jade/data/' +
+                    filename + '.json');
+            }))
+            .pipe(jade())
             .pipe(gulp.dest(config.build + '/'))
             .pipe(reload({stream: true}));
     });
@@ -93,33 +118,26 @@
     /**
      * CSS build.
      */
-    gulp.task('css-lint', function cssTask() {
-        return gulp.src(config.source + '/css/**/*.css')
+    gulp.task('less-lint', function cssTask() {
+        return gulp.src(config.source + '/less/**/*.less')
             .pipe(plumber())
-            .pipe(csslint('.csslintrc'))
-            .pipe(csslint.reporter('compact'))
-            .pipe(csslint.failReporter());
+            .pipe(lesshint({
+                // Options
+            }))
+            .pipe(lesshint.reporter())
+            .on('error', function () {
+                gutil.log('Less lint error');
+            });
     });
-    gulp.task('css', ['css-lint'], function cssTask() {
-        var processors = [
-            autoprefixer({
-                browsers: ['> 1%', 'IE 7'],
-                cascade: false
-            }),
-            pxtorem({
-                replace: false
-            })
-        ];
-        return gulp.src(config.source + '/css/**/*.css')
-            .pipe(cache('css'))
+    gulp.task('less', ['less-lint'], function cssTask() {
+        return gulp.src(config.source + '/less/style.less')
             .pipe(plumber(plumberOpt))
             .pipe(sourcemaps.init())
-                .pipe(csscomb())
-                .pipe(postcss(processors))
-                .pipe(gulp.dest(config.build + '/css/'))
-                .pipe(rename({suffix: '.min'}))
-                .pipe(cleanCSS())
-            .pipe(sourcemaps.write('/maps/'))
+            .pipe(less({
+                plugins: [autoprefix, csscomb, cleancss]
+            }))
+            .pipe(rename({suffix: '.min'}))
+            .pipe(sourcemaps.write())
             .pipe(gulp.dest(config.build + '/css/'))
             .pipe(reload({stream: true}));
     });
@@ -191,10 +209,10 @@
             server: config.build
         });
 
-        gulp.watch(config.source + '/html/**/*.html', ['html']);
-        gulp.watch(config.source + '/css/**/*.css', ['css']);
+        gulp.watch(config.source + '/jade/**/*.jade', ['jade']);
+        gulp.watch(config.source + '/less/**/*.less', ['less']);
         gulp.watch(config.source + '/js/**/*.js', ['js']);
     });
 
-    gulp.task('default', ['html', 'css', 'js', 'img', 'watch']);
+    gulp.task('default', ['jade', 'less', 'js', 'img', 'watch']);
 }());

@@ -11,5 +11,5 @@
     }
 
     doSomething(a);
-    //console.log('Script.js is runinng fine...', doSomething(a));
+    console.log('Script.js is runinng fine...', doSomething(a));
 }());

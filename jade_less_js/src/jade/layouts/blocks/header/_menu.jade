@@ -1,0 +1,7 @@
+- var lang = 'pt'
+
+nav
+    ul.menu
+        each menu in menus
+            li.menu-item.i
+                a(href="#{menu['link']}") #{menu['name'][lang]}
