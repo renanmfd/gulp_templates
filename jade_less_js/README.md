@@ -1,4 +1,4 @@
-# Gulp + HTML + CSS + JS
+# Gulp + Jade + Less + JS
 ---
 
 ## Features
