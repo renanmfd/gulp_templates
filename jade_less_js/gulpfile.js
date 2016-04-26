@@ -54,6 +54,7 @@ if (!String.prototype.startsWith) {
 
         // HTML tools.
         jade = require('gulp-jade'),
+        marked = require('marked'),
         jadelint = require('gulp-jadelint'),
 
         // CSS tools.
