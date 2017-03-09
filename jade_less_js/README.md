@@ -38,7 +38,7 @@ If installed, you should see the version of NodeJS, something like `v4.4.3`, if 
 
 #### Installing
 
-To install NodeJS, go to the (official website)[https://nodejs.org/en/] and download the stable version for your operating system.
+To install NodeJS, go to the [official website](https://nodejs.org/en/) and download the stable version for your operating system.
 On windows, execute the .msi as admin and follow instructions.
 On linux, give the file execution permission and execute as admin.
 
